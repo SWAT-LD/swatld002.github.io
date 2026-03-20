@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掌上校园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 1220px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        /* 主界面样式 */
+        #home-page {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        #home-page img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* 请假列表页样式 */
+        .header-img, .footer-img {
+            width: 100%;
+            display: block;
+        }
+        
+        .content-area {
+            padding: 15px;
+            background-color: #fff;
+        }
+        
+        .leave-box {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        
+        .leave-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin-bottom: 15px;
+        }
+        
+        .time-info {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .reason {
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            color: #1890ff;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        
+        /* 请假详情页样式 */
+        .detail-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            width: 100%;
+        }
+        
+        .detail-header img {
+            width: 100%;
+            display: block;
+        }
+        
+        .detail-content {
+            padding: 15px;
+            background-color: #fff;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #e6f7ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #1890ff;
+            font-weight: bold;
+        }
+        
+        .gender {
+            color: #1890ff;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .section-divider {
+            height: 6px;
+            background-color: #e6f7ff;
+            margin: 15px 0;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .blue-bar {
+            width: 4px;
+            height: 18px;
+            background-color: #1890ff;
+            margin-right: 8px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .label {
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .value {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .approved {
+            color: #52c41a;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .seal {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #52c41a;
+            border-radius: 50%;
+            margin-left: 5px;
+            position: relative;
+        }
+        
+        .seal:after {
+            content: "✓";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            color: #52c41a;
+        }
+        
+        .process-node {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .node-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-right: 15px;
+        }
+        
+        .node-circle {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: #1890ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+        
+        .node-circle.pending {
+            background-color: #fff;
+            border: 2px solid #1890ff;
+        }
+        
+        .node-connector {
+            width: 2px;
+            height: 40px;
+            background-color: #1890ff;
+            margin-top: 5px;
+        }
+        
+        .node-info {
+            flex: 1;
+        }
+        
+        .node-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .node-title {
+            font-weight: bold;
+        }
+        
+        .node-time {
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .node-details {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .node-comment {
+            color: #1890ff;
+        }
+        
+        /* 左上角返回区域 */
+        .back-area {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 60px;
+            height: 60px;
+            z-index: 100;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主界面 -->
+    <div id="home-page" class="page active">
+        <div class="back-area" onclick="goBack()"></div>
+        <img src="02.jpg" alt="主界面" onclick="showPage('list-page')">
+    </div>
+    
+    <!-- 请假列表页 -->
+    <div id="list-page" class="page">
+        <div class="back-area" onclick="goBack()"></div>
+        <img src="01.jpg" alt="头部" class="header-img">
+        <div class="content-area">
+            <div class="leave-box" onclick="showPage('detail-page')">
+                <div class="leave-title">节假日及寒暑假请假</div>
+                <div class="divider"></div>
+                <div class="time-info" id="start-time-1">开始时间: 2025-09-30 10:00</div>
+                <div class="time-info" id="end-time-1">结束时间: 2025-10-01 10:00</div>
+                <div class="reason">请假理由: 外出参加公安联考面试培训</div>
+                <div class="status">审核通过</div>
+            </div>
+            
+            <div class="leave-box" onclick="showPage('detail-page')">
+                <div class="leave-title">节假日及寒暑假请假</div>
+                <div class="divider"></div>
+                <div class="time-info" id="start-time-2">开始时间: 2025-09-20 10:00</div>
+                <div class="time-info" id="end-time-2">结束时间: 2025-09-21 10:00</div>
+                <div class="reason">请假理由: 回家</div>
+                <div class="status">审核通过</div>
+            </div>
+        </div>
+        <img src="03.jpg" alt="底部" class="footer-img">
+    </div>
+    
+    <!-- 请假详情页 -->
+    <div id="detail-page" class="page">
+        <div class="back-area" onclick="goBack()"></div>
+        <div class="detail-header">
+            <img src="04.jpg" alt="详情头部">
+        </div>
+        
+        <div class="user-info">
+            <div class="avatar">?</div>
+            <div>
+                <span>卓依彤</span>
+                <span class="gender">♂</span>
+            </div>
+        </div>
+        
+        <div class="detail-content">
+            <div class="section-title">
+                <div class="blue-bar"></div>
+                <div>请假信息</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">请假类型：</div>
+                <div class="value">节假日及寒暑假请假</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">请假去向：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">详细地址：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">开始时间：</div>
+                <div class="value" id="detail-start-time">2025-09-30 10:00:00</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">结束时间：</div>
+                <div class="value" id="detail-end-time">2025-10-01 10:00:00</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">统计时长：</div>
+                <div class="value">1天0小时0分钟</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">紧急联系人：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">紧急联系人电话：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">请假理由：</div>
+                <div class="value">外出参加公安联考面试培训</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">请假状态：</div>
+                <div class="value" style="color: #1890ff;">审核通过</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">销假状态：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="info-row">
+                <div class="label">请假附件：</div>
+                <div class="value"></div>
+            </div>
+            
+            <div class="section-divider"></div>
+            
+            <div class="section-title">
+                <div class="blue-bar" style="background-color: #1890ff;"></div>
+                <div>办理进度</div>
+            </div>
+            
+            <div class="process-node">
+                <div class="node-line">
+                    <div class="node-circle">✓</div>
+                    <div class="node-connector"></div>
+                </div>
+                <div class="node-info">
+                    <div class="node-header">
+                        <div class="node-title">申请</div>
+                        <div class="approved">申请 <div class="seal"></div></div>
+                    </div>
+                    <div class="node-time" id="apply-time">2025-09-29 10:00</div>
+                    <div class="node-details">
+                        <div>卓依彤</div>
+                        <div class="node-comment">请刘队批准</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="process-node">
+                <div class="node-line">
+                    <div class="node-circle">✓</div>
+                    <div class="node-connector"></div>
+                </div>
+                <div class="node-info">
+                    <div class="node-header">
+                        <div class="node-title">辅导员审核</div>
+                        <div class="approved">审核通过 <div class="seal"></div></div>
+                    </div>
+                    <div class="node-time" id="approve-time">2025-09-29 12:00</div>
+                    <div class="node-details">
+                        <div>刘毅超</div>
+                        <div></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="process-node">
+                <div class="node-line">
+                    <div class="node-circle pending"></div>
+                </div>
+                <div class="node-info">
+                    <div class="node-header">
+                        <div class="node-title">结束</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 页面导航功能
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+        
+        function goBack() {
+            const pages = ['home-page', 'list-page', 'detail-page'];
+            const currentPage = document.querySelector('.page.active').id;
+            const currentIndex = pages.indexOf(currentPage);
+            
+            if (currentIndex > 0) {
+                showPage(pages[currentIndex - 1]);
+            }
+        }
+        
+        // 动态日期计算
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}`;
+        }
+        
+        function formatDateTime(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+        }
+        
+        // 初始化日期信息
+        function initDates() {
+            const now = new Date();
+            
+            // 第一个请假信息（今天到明天）
+            const startTime1 = new Date(now);
+            startTime1.setHours(10, 0, 0, 0);
+            
+            const endTime1 = new Date(now);
+            endTime1.setDate(endTime1.getDate() + 1);
+            endTime1.setHours(10, 0, 0, 0);
+            
+            document.getElementById('start-time-1').textContent = `开始时间: ${formatDate(startTime1)}`;
+            document.getElementById('end-time-1').textContent = `结束时间: ${formatDate(endTime1)}`;
+            
+            // 第二个请假信息（10天前）
+            const startTime2 = new Date(now);
+            startTime2.setDate(startTime2.getDate() - 10);
+            startTime2.setHours(10, 0, 0, 0);
+            
+            const endTime2 = new Date(startTime2);
+            endTime2.setDate(endTime2.getDate() + 1);
+            endTime2.setHours(10, 0, 0, 0);
+            
+            document.getElementById('start-time-2').textContent = `开始时间: ${formatDate(startTime2)}`;
+            document.getElementById('end-time-2').textContent = `结束时间: ${formatDate(endTime2)}`;
+            
+            // 详情页时间
+            document.getElementById('detail-start-time').textContent = formatDateTime(startTime1);
+            document.getElementById('detail-end-time').textContent = formatDateTime(endTime1);
+            
+            // 申请和审核时间
+            const applyTime = new Date(now);
+            applyTime.setDate(applyTime.getDate() - 1);
+            applyTime.setHours(10, 0, 0, 0);
+            
+            const approveTime = new Date(now);
+            approveTime.setDate(approveTime.getDate() - 1);
+            approveTime.setHours(12, 0, 0, 0);
+            
+            document.getElementById('apply-time').textContent = formatDate(applyTime);
+            document.getElementById('approve-time').textContent = formatDate(approveTime);
+        }
+        
+        // 页面加载完成后初始化
+        window.onload = function() {
+            initDates();
+        };
+    </script>
+</body>
+</html>
