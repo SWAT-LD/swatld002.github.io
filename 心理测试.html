@@ -7,7 +7,6 @@
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
-    /* 基础样式 */
     body, html { 
         width: 100%; height: 100%; 
         font-family: "Microsoft YaHei", sans-serif; 
@@ -19,198 +18,59 @@
         align-items: center; 
     }
 
-    /* ===== 第一层：背景图片层 ===== */
     #bg-image-layer {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        z-index: 1;
-        background-size: contain;
-        background-repeat: no-repeat;
-        opacity: 0.95;
-        background-position: right center; 
-        transform: scaleX(-1);
-        transition: transform 0.3s ease; 
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 1; background-size: contain; background-repeat: no-repeat;
+        opacity: 0.95; background-position: right center; transform: scaleX(-1);
+        transition: transform 0.3s ease, opacity 0.3s ease; 
     }
 
-    /* ===== 第二层：遮罩层 ===== */
     #bg-mask-layer {
-        position: fixed;
-        top: 0; left: 0;
-        width: 100vw; height: 100vh;
-        z-index: 2;
-        pointer-events: none;
-        background: linear-gradient(to right, 
-            rgba(255, 255, 255, 0.0) 0%,    
-            rgba(255, 255, 255, 0.4) 30%,   
-            rgba(255, 255, 255, 0.95) 60%,  
-            rgba(255, 255, 255, 1) 100%     
-        );
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 2; pointer-events: none;
+        background: linear-gradient(to right, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.4) 30%, rgba(255,255,255,0.95) 60%, rgba(255,255,255,1) 100%);
     }
 
-    /* ===== 第三层：游戏内容主体 ===== */
-    .game-container { 
-        width: 900px; 
-        height: 600px; 
-        position: relative; 
-        display: flex; 
-        z-index: 10; 
-        transform-origin: center center;
-        flex-shrink: 0;
-    }
-
+    .game-container { width: 900px; height: 600px; position: relative; display: flex; z-index: 10; transform-origin: center center; flex-shrink: 0; }
     .left-panel { width: 45%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-    
-    .crystal-ball { 
-        width: 220px; height: 220px; border-radius: 50%; 
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(100,200,255,0.4) 40%, rgba(0,50,150,0.7) 80%, rgba(0,0,0,0.9)); 
-        box-shadow: 0 0 30px rgba(0, 150, 255, 0.6), inset -10px -10px 20px rgba(0,0,0,0.5); 
-        cursor: pointer; display: flex; justify-content: center; align-items: center; 
-        transition: transform 0.2s, box-shadow 0.2s; position: relative; margin-bottom: 30px; border: 3px solid #6ab5ff; flex-shrink: 0; 
-    }
+    .crystal-ball { width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(100,200,255,0.4) 40%, rgba(0,50,150,0.7) 80%, rgba(0,0,0,0.9)); box-shadow: 0 0 30px rgba(0, 150, 255, 0.6), inset -10px -10px 20px rgba(0,0,0,0.5); cursor: pointer; display: flex; justify-content: center; align-items: center; transition: transform 0.2s, box-shadow 0.2s; position: relative; margin-bottom: 30px; border: 3px solid #6ab5ff; flex-shrink: 0; }
     .crystal-ball:hover { transform: scale(1.05); box-shadow: 0 0 50px rgba(0, 150, 255, 0.9), inset -10px -10px 20px rgba(0,0,0,0.5); }
     #answer-icon { font-size: 100px; color: #ff0; text-shadow: 0 0 20px #ff0; opacity: 0; transition: opacity 0.5s; position: absolute; }
-    
-    .instructions { 
-        font-size: 15px; 
-        color: #222; 
-        text-shadow: 1px 1px 2px rgba(255,255,255,0.8); 
-        padding: 12px; 
-        background: rgba(255, 255, 255, 0.6); 
-        border-radius: 8px;
-        backdrop-filter: blur(2px);
-    }
+    .instructions { font-size: 15px; color: #222; text-shadow: 1px 1px 2px rgba(255,255,255,0.8); padding: 12px; background: rgba(255, 255, 255, 0.6); border-radius: 8px; backdrop-filter: blur(2px); }
     .instructions p { margin-bottom: 10px; line-height: 1.5; }
     .instructions p:last-child { margin-bottom: 0; color: #d32f2f; font-weight: bold; }
-
     .right-panel { width: 55%; display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(10, 1fr); gap: 2px; padding: 20px; font-size: 16px; font-family: "Courier New", monospace; }
     .grid-item { display: flex; justify-content: flex-end; align-items: center; color: #333; font-weight: bold; }
     .grid-item span.icon { margin-left: 5px; color: #000; font-size: 18px; width: 20px; text-align: center; }
-
     .vertical-title { position: absolute; right: -60px; top: 50px; writing-mode: vertical-rl; font-size: 40px; font-weight: bold; font-family: "SimSun", serif; color: #1565c0; text-shadow: 1px 1px 0 #fff, 0 0 10px rgba(255,255,255,0.8); letter-spacing: 10px; }
-
     .right-panel-result { width: 55%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     .result-text { font-size: 32px; font-weight: bold; color: #d32f2f; text-shadow: 1px 1px 2px #fff, 0 0 15px rgba(255,255,255,0.8); text-align: center; }
     .result-text p { margin: 25px 0; }
-    
     .btn { padding: 12px 40px; font-size: 20px; font-weight: bold; color: #fff; background: linear-gradient(to bottom, #8b0000, #ff0000, #8b0000); border: 2px solid #ffcccc; border-radius: 25px; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2); text-shadow: 1px 1px 2px #000; transition: transform 0.1s; }
     .btn:active { transform: scale(0.95); }
-    
     .footer { position: absolute; bottom: 10px; right: 20px; font-size: 12px; color: #1565c0; text-align: right; line-height: 1.4; z-index: 20;}
     .hidden { display: none !important; }
 
-    /* =========================================
-       手机端专门适配（竖屏版）
-       ========================================= */
     @media (max-width: 768px) {
-        body, html { 
-            overflow-y: auto; 
-            overflow-x: hidden; 
-            display: block; 
-        }
-        
-        #bg-image-layer { 
-            background-size: cover; 
-            background-position: center; 
-            transform: none !important; 
-        }
-        
-        #bg-mask-layer {
-            background: linear-gradient(to bottom, 
-                rgba(255, 255, 255, 0.85) 0%, 
-                rgba(255, 255, 255, 0.95) 100%);
-        }
-        
-        .game-container { 
-            width: 100%; 
-            height: auto; 
-            flex-direction: column; 
-            padding: 15px; 
-            margin: 0;
-        }
-        
-        .vertical-title {
-            position: static;
-            writing-mode: horizontal-tb;
-            text-align: center;
-            font-size: 26px;
-            letter-spacing: 4px;
-            margin: 10px 0 20px 0;
-            order: -1; 
-        }
-        
+        body, html { overflow-y: auto; overflow-x: hidden; display: block; }
+        #bg-image-layer { background-size: cover; background-position: center; transform: none !important; }
+        #bg-mask-layer { background: linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.95) 100%); }
+        .game-container { width: 100%; height: auto; flex-direction: column; padding: 15px; margin: 0; }
+        .vertical-title { position: static; writing-mode: horizontal-tb; text-align: center; font-size: 26px; letter-spacing: 4px; margin: 10px 0 20px 0; order: -1; }
         .left-panel { width: 100%; padding: 0; }
         .crystal-ball { width: 160px; height: 160px; margin-bottom: 15px; }
         #answer-icon { font-size: 70px; }
-        
-        .instructions {
-            font-size: 13px;
-            margin-bottom: 15px;
-            padding: 10px;
-        }
-        
-        .right-panel {
-            width: 100%;
-            grid-template-columns: repeat(5, 1fr); 
-            grid-template-rows: auto;
-            gap: 4px;
-            padding: 10px 0;
-            font-size: 14px;
-        }
-        
+        .instructions { font-size: 13px; margin-bottom: 15px; padding: 10px; }
+        .right-panel { width: 100%; grid-template-columns: repeat(5, 1fr); grid-template-rows: auto; gap: 4px; padding: 10px 0; font-size: 14px; }
         .grid-item { justify-content: center; padding: 2px 0; }
-
-        /* =========================================
-           手机端【结果页】特别优化（一屏展示，无需滑动）
-           ========================================= */
-        #result-screen {
-            height: 100vh; /* 刚好占满一屏 */
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* 垂直居中所有内容 */
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* 打破左侧面板和右侧文字容器的限制，方便重新排序 */
-        #result-screen .left-panel,
-        #result-screen .right-panel-result {
-            display: contents; 
-        }
-
-        /* 通过 order 重新排列：标题 -> 水晶球 -> 文字 -> 按钮 */
-        #result-screen .vertical-title {
-            order: 0;
-            margin-bottom: 20px;
-        }
-
-        #result-screen .crystal-ball {
-            order: 1;
-            margin-bottom: 30px;
-        }
-
-        #result-screen .result-text {
-            order: 2;
-            margin: 0 0 40px 0;
-        }
-
-        #result-screen .result-text p {
-            margin: 10px 0; /* 缩小行距 */
-            font-size: 22px;
-        }
-
-        #result-screen .btn {
-            order: 3;
-            font-size: 18px;
-            padding: 12px 35px;
-        }
-        
-        .footer {
-            position: static;
-            text-align: center;
-            margin-top: 20px;
-            padding-bottom: 20px;
-        }
+        #result-screen { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        #result-screen .left-panel, #result-screen .right-panel-result { display: contents; }
+        #result-screen .vertical-title { order: 0; margin-bottom: 20px; }
+        #result-screen .crystal-ball { order: 1; margin-bottom: 30px; }
+        #result-screen .result-text { order: 2; margin: 0 0 40px 0; }
+        #result-screen .result-text p { margin: 10px 0; font-size: 22px; }
+        #result-screen .btn { order: 3; font-size: 18px; padding: 12px 35px; }
+        .footer { position: static; text-align: center; margin-top: 20px; padding-bottom: 20px; }
     }
 </style>
 </head>
@@ -269,6 +129,8 @@
     ];
 
     let targetSymbol = '♈'; 
+    // 用于记录已经预加载过的图片，防止重复请求
+    const preloadedImages = new Set(); 
 
     document.getElementById('sys-info').innerHTML = 
         `您的操作系统: ${navigator.platform} <br> 您的屏幕分辨率: ${screen.width}X${screen.height}`;
@@ -281,6 +143,26 @@
             [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
         }
         return array;
+    }
+
+    // =========================================
+    // 高招：静默预加载核心逻辑
+    // =========================================
+    function preloadRemainingImages(currentBg) {
+        // 延迟 1.5 秒后开始预加载，避免抢占当前屏幕图片的带宽
+        setTimeout(() => {
+            backgrounds.forEach(bg => {
+                // 如果不是当前显示的这一张，且没有被加载过
+                if (bg !== currentBg && !preloadedImages.has(bg)) {
+                    const img = new Image(); // 创建一个游离在内存中的图片对象
+                    img.src = bg;
+                    img.onload = () => {
+                        preloadedImages.add(bg); // 记录已加载
+                        console.log(`[预加载成功]: ${bg}`);
+                    };
+                }
+            });
+        }, 1500);
     }
 
     function initGame() {
@@ -298,6 +180,9 @@
                 bgLayer.style.backgroundPosition = 'right center';
             }
         }
+
+        // 触发预加载
+        preloadRemainingImages(randomBg);
 
         let availableSymbols = shuffle([...symbols]);
         targetSymbol = availableSymbols.pop();
@@ -325,7 +210,6 @@
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-icon-display').textContent = targetSymbol;
             
-            // 手机端切换时，不需要滑动，因为是一屏居中
             if (window.innerWidth <= 768) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
