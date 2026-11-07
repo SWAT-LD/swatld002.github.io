@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>神秘读心术</title>
+<title>吉普赛神秘读心术 - LD制作</title>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
@@ -28,8 +28,6 @@
         background-size: contain;
         background-repeat: no-repeat;
         opacity: 0.95;
-        
-        /* 默认样式（JS 会动态覆盖） */
         background-position: right center; 
         transform: scaleX(-1);
         transition: transform 0.3s ease; 
@@ -42,7 +40,6 @@
         width: 100vw; height: 100vh;
         z-index: 2;
         pointer-events: none;
-        
         background: linear-gradient(to right, 
             rgba(255, 255, 255, 0.0) 0%,    
             rgba(255, 255, 255, 0.4) 30%,   
@@ -106,28 +103,24 @@
        手机端专门适配（竖屏版）
        ========================================= */
     @media (max-width: 768px) {
-        /* 允许纵向滚动，取消居中布局 */
         body, html { 
             overflow-y: auto; 
             overflow-x: hidden; 
             display: block; 
         }
         
-        /* 手机端图片全屏覆盖，取消镜像（不影响查看） */
         #bg-image-layer { 
             background-size: cover; 
             background-position: center; 
             transform: none !important; 
         }
         
-        /* 手机端遮罩改为加厚的白色，保证文字清晰 */
         #bg-mask-layer {
             background: linear-gradient(to bottom, 
                 rgba(255, 255, 255, 0.85) 0%, 
                 rgba(255, 255, 255, 0.95) 100%);
         }
         
-        /* 主容器改为纵向排列 */
         .game-container { 
             width: 100%; 
             height: auto; 
@@ -136,7 +129,6 @@
             margin: 0;
         }
         
-        /* 竖排标题改为横排放在最上方 */
         .vertical-title {
             position: static;
             writing-mode: horizontal-tb;
@@ -144,32 +136,19 @@
             font-size: 26px;
             letter-spacing: 4px;
             margin: 10px 0 20px 0;
-            order: -1; /* 强制排在最前面 */
+            order: -1; 
         }
         
-        /* 左侧面板适应宽度 */
-        .left-panel {
-            width: 100%;
-            padding: 0;
-        }
-        
-        /* 水晶球缩小一点给下面腾出空间 */
-        .crystal-ball {
-            width: 160px;
-            height: 160px;
-            margin-bottom: 15px;
-        }
-        
+        .left-panel { width: 100%; padding: 0; }
+        .crystal-ball { width: 160px; height: 160px; margin-bottom: 15px; }
         #answer-icon { font-size: 70px; }
         
-        /* 说明文字紧凑一点 */
         .instructions {
             font-size: 13px;
             margin-bottom: 15px;
             padding: 10px;
         }
         
-        /* 核心：数字网格改为 5 列，适合手机屏幕 */
         .right-panel {
             width: 100%;
             grid-template-columns: repeat(5, 1fr); 
@@ -179,22 +158,53 @@
             font-size: 14px;
         }
         
-        .grid-item {
-            justify-content: center; /* 居中更美观 */
-            padding: 2px 0;
+        .grid-item { justify-content: center; padding: 2px 0; }
+
+        /* =========================================
+           手机端【结果页】特别优化（一屏展示，无需滑动）
+           ========================================= */
+        #result-screen {
+            height: 100vh; /* 刚好占满一屏 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* 垂直居中所有内容 */
+            align-items: center;
+            padding: 20px;
         }
-        
-        /* 结果页适配 */
-        .right-panel-result {
-            width: 100%;
-            padding: 20px 0;
+
+        /* 打破左侧面板和右侧文字容器的限制，方便重新排序 */
+        #result-screen .left-panel,
+        #result-screen .right-panel-result {
+            display: contents; 
         }
-        
-        .result-text {
+
+        /* 通过 order 重新排列：标题 -> 水晶球 -> 文字 -> 按钮 */
+        #result-screen .vertical-title {
+            order: 0;
+            margin-bottom: 20px;
+        }
+
+        #result-screen .crystal-ball {
+            order: 1;
+            margin-bottom: 30px;
+        }
+
+        #result-screen .result-text {
+            order: 2;
+            margin: 0 0 40px 0;
+        }
+
+        #result-screen .result-text p {
+            margin: 10px 0; /* 缩小行距 */
             font-size: 22px;
         }
+
+        #result-screen .btn {
+            order: 3;
+            font-size: 18px;
+            padding: 12px 35px;
+        }
         
-        /* 页脚常驻底部 */
         .footer {
             position: static;
             text-align: center;
@@ -215,19 +225,19 @@
             <div id="answer-icon"></div>
         </div>
         <div class="instructions">
-            <p>这是一个刑事侦查学古老的神秘读心术，通过识别瞳孔、心率以及体温，它能测算出你内心的感应。百试不爽，非常可怕。准确率＞90%</p>
+            <p>这是一个吉普赛人古老的神秘读心术，它能测算出你内心的感应。百试不爽，非常的可怕。</p>
             <p>在心中从 10~99 之间任意挑选一个数，用这个数先减去它自己的十位数再减去它的个位数，得到最终的数。</p>
-            <p>在图表中找出最终数相对应的图形（请往右滑），并把这个图形牢记心中。然后点击水晶球，它将会看穿你的内心！！！</p>
-            <p>例如：你选的是 25，25 - 2 - 5 = 最终数 18。（注意，图案在数字右边！）</p>
+            <p>在图表中找出最终数相对应的图形，并把这个图形牢记心中。然后点击水晶球，它将会看穿你的内心！！！</p>
+            <p>例如：你选的是 25，25 - 2 - 5 = 最终数 18。</p>
         </div>
     </div>
     <div class="right-panel" id="number-grid"></div>
-    <div class="vertical-title">刑侦神秘读心术</div>
+    <div class="vertical-title">吉普赛神秘读心术</div>
 </div>
 
 <div id="result-screen" class="game-container hidden">
     <div class="left-panel">
-        <div class="crystal-ball" style="cursor: default; margin-bottom: 20px;">
+        <div class="crystal-ball" style="cursor: default;">
             <div id="result-icon-display" style="font-size: 120px; color: #ff0; text-shadow: 0 0 30px #ff0, 0 0 60px #ff0000;"></div>
         </div>
         <button class="btn" onclick="resetGame()">再试一次</button>
@@ -239,11 +249,11 @@
             <p>请再试一次......</p>
         </div>
     </div>
-    <div class="vertical-title">刑侦神秘读心术</div>
+    <div class="vertical-title">吉普赛神秘读心术</div>
 </div>
 
 <div class="footer">
-    LD 261107<br>
+    LD 制作<br>
     <span id="sys-info"></span>
 </div>
 
@@ -279,8 +289,6 @@
         
         bgLayer.style.backgroundImage = `url('${randomBg}')`;
 
-        // 电脑端：处理 03 图片不镜像贴左，其他镜像贴左
-        // 手机端：由 CSS 强制接管，居中且不镜像，确保全屏显示
         if (window.innerWidth > 768) {
             if (randomBg.includes('26110703')) {
                 bgLayer.style.transform = 'none';
@@ -291,7 +299,6 @@
             }
         }
 
-        // 游戏逻辑
         let availableSymbols = shuffle([...symbols]);
         targetSymbol = availableSymbols.pop();
 
@@ -318,7 +325,7 @@
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-icon-display').textContent = targetSymbol;
             
-            // 手机端切换后滚动回顶部
+            // 手机端切换时，不需要滑动，因为是一屏居中
             if (window.innerWidth <= 768) {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -330,21 +337,17 @@
         document.getElementById('game-screen').classList.remove('hidden');
         initGame();
         
-        // 手机端重试时滚动回顶部
         if (window.innerWidth <= 768) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
-    // 确保窗口大小改变时背景逻辑更新
     window.addEventListener('resize', () => {
         const bgLayer = document.getElementById('bg-image-layer');
         if (window.innerWidth <= 768) {
-            // 手机端样式重置为 CSS 控制
             bgLayer.style.transform = '';
             bgLayer.style.backgroundPosition = '';
         } else {
-            // 电脑端重新计算
             const bgUrl = bgLayer.style.backgroundImage;
             if (bgUrl.includes('26110703')) {
                 bgLayer.style.transform = 'none';
