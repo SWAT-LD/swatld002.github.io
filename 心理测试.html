@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>心理学猜测</title>
+<title>神秘读心术</title>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
     
@@ -32,7 +32,7 @@
         /* 默认样式（JS 会动态覆盖） */
         background-position: right center; 
         transform: scaleX(-1);
-        transition: transform 0.3s ease; /* 让翻转顺滑一点 */
+        transition: transform 0.3s ease; 
     }
 
     /* ===== 第二层：左侧透明，右侧变白的遮罩层 ===== */
@@ -60,6 +60,7 @@
         display: flex; 
         z-index: 10; 
         transform-origin: center center;
+        flex-shrink: 0; /* 防止被挤压 */
     }
 
     .left-panel { width: 45%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
@@ -108,19 +109,47 @@
     .footer { position: absolute; bottom: 10px; right: 20px; font-size: 12px; color: #1565c0; text-align: right; line-height: 1.4; z-index: 20;}
     .hidden { display: none !important; }
 
-    /* ===== 手机端响应式适配 ===== */
+    /* ===== 手机端响应式适配（横向滚动版） ===== */
     @media (max-width: 950px) {
         .game-container { transform: scale(calc(100vw / 950)); }
     }
+    
     @media (max-width: 768px) {
-        #bg-image-layer { background-size: cover; background-position: center; }
-        #bg-mask-layer {
-            background: linear-gradient(to bottom, 
-                rgba(255,255,255,0.1) 0%, 
-                rgba(255,255,255,0.9) 60%, 
-                rgba(255,255,255,1) 100%);
+        /* 手机端允许横向滚动，取消居中，从头开始展示 */
+        body, html { 
+            overflow-x: auto; 
+            overflow-y: hidden; 
+            justify-content: flex-start; 
+            -webkit-overflow-scrolling: touch; 
         }
-        .game-container { transform: scale(calc(100vw / 1100)); }
+        
+        /* 背景保持左对齐，完整显示 */
+        #bg-image-layer { background-size: contain; }
+        
+        #bg-mask-layer {
+            background: linear-gradient(to right, 
+                rgba(255, 255, 255, 0.3) 0%, 
+                rgba(255, 255, 255, 0.8) 40%, 
+                rgba(255, 255, 255, 1) 100%);
+        }
+        
+        /* 取消强制缩小，保持原本的 900px 大小 */
+        .game-container { 
+            transform: none; 
+            margin-left: 20px; /* 左侧留点空隙 */
+            margin-right: 100px; /* 右侧给垂直标题留出空间 */
+            height: 100vh;
+        }
+
+        /* 底部信息固定在右下角 */
+        .footer { 
+            position: fixed; 
+            right: 10px; 
+            bottom: 10px; 
+            background: rgba(255,255,255,0.8);
+            padding: 4px 8px;
+            border-radius: 5px;
+        }
     }
 </style>
 </head>
@@ -135,14 +164,14 @@
             <div id="answer-icon"></div>
         </div>
         <div class="instructions">
-            <p>这是一个刑事侦查技术的神秘读心术，通过识别并计算你的瞳孔的聚焦点它能测算出你内心的感应。百试不爽，非常可怕。准确率超过80%</p>
+            <p>这是一个古老的神秘读心术用于刑事侦查，通过识别瞳孔、心率、体温等它能测算出你内心的感应。百试不爽，非常可怕。准确率超90%</p>
             <p>在心中从 10~99 之间任意挑选一个数，用这个数先减去它自己的十位数再减去它的个位数，得到最终的数。</p>
             <p>在图表中找出最终数相对应的图形，并把这个图形牢记心中。然后点击水晶球，它将会看穿你的内心！！！</p>
-            <p>例如：你选的是 25，25 - 2 - 5 = 最终数 18。（图案在数字的右边！）</p>
+            <p>例如：你选的是 25，25 - 2 - 5 = 最终数 18。（注意，图案在数字的右边！）</p>
         </div>
     </div>
     <div class="right-panel" id="number-grid"></div>
-    <div class="vertical-title">侦查学神秘读心术</div>
+    <div class="vertical-title">刑事侦查神秘读心术</div>
 </div>
 
 <div id="result-screen" class="game-container hidden">
@@ -159,11 +188,11 @@
             <p>请再试一次......</p>
         </div>
     </div>
-    <div class="vertical-title">侦查学神秘读心术</div>
+    <div class="vertical-title">刑侦神秘读心术</div>
 </div>
 
 <div class="footer">
-    LD 制作<br>
+    LD 2026-11-07<br>
     <span id="sys-info"></span>
 </div>
 
@@ -194,21 +223,25 @@
     }
 
     function initGame() {
-        // 随机选择背景图
         const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
         const bgLayer = document.getElementById('bg-image-layer');
         
         bgLayer.style.backgroundImage = `url('${randomBg}')`;
 
-        // 【核心修改】判断是否是特定的 03 图片
-        if (randomBg.includes('26110703')) {
-            // 如果是 03：不镜像，直接靠左
+        // 判断是否是特定的 03 图片以及是否是移动端
+        if (window.innerWidth <= 768) {
+            // 手机端统一贴左且不镜像，方便配合横向滑动
             bgLayer.style.transform = 'none';
             bgLayer.style.backgroundPosition = 'left center';
         } else {
-            // 其他图：正常镜像，并且翻转后靠左（利用靠右+翻转的逻辑）
-            bgLayer.style.transform = 'scaleX(-1)';
-            bgLayer.style.backgroundPosition = 'right center';
+            // 电脑端
+            if (randomBg.includes('26110703')) {
+                bgLayer.style.transform = 'none';
+                bgLayer.style.backgroundPosition = 'left center';
+            } else {
+                bgLayer.style.transform = 'scaleX(-1)';
+                bgLayer.style.backgroundPosition = 'right center';
+            }
         }
 
         // 游戏逻辑
@@ -237,6 +270,10 @@
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             document.getElementById('result-icon-display').textContent = targetSymbol;
+            // 手机端切换界面后，平滑滚动回左侧
+            if (window.innerWidth <= 768) {
+                window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            }
         }, 1000);
     }
 
@@ -244,22 +281,13 @@
         document.getElementById('result-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         initGame();
-    }
-
-    // 手机端强制样式修正（如果在手机屏幕下打开了 03，也不应该改变居中铺满的逻辑）
-    function adjustMobileLayout() {
+        // 手机端重试时，平滑滚动回左侧
         if (window.innerWidth <= 768) {
-            const bgLayer = document.getElementById('bg-image-layer');
-            bgLayer.style.transform = 'none'; // 手机端统一不翻转居中，因为全屏铺满看不清左右
-            bgLayer.style.backgroundPosition = 'center';
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
         }
     }
 
-    window.onload = () => {
-        initGame();
-        adjustMobileLayout();
-    };
-    window.onresize = adjustMobileLayout;
+    window.onload = initGame;
 </script>
 </body>
 </html>
