@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>*ST广糖 2026H1 财务困境与现金流风险分析大屏</title>
-    
-    <!-- 引入 ECharts，带备用 CDN 机制 -->
+    <title>*ST广糖 2026H1 数学分析</title>
+
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
     <script>
-        // 检测 ECharts 是否加载成功，若失败则切换到国内极速 CDN
         if (typeof echarts === 'undefined') {
             document.write('<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.5.0/echarts.min.js"><\/script>');
         }
@@ -23,14 +21,11 @@
             --danger: #e74c3c;
             --primary: #2980b9;
             --warning: #f39c12;
+            --success: #27ae60;
             --border: #e1e8ed;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
@@ -40,48 +35,30 @@
             line-height: 1.6;
         }
 
-        /* 顶部标题区 */
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 24px;
-            color: var(--text-main);
-            letter-spacing: 1px;
-        }
-        .header p {
-            color: var(--text-muted);
-            font-size: 14px;
-            margin-top: 8px;
-        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 24px; color: var(--text-main); letter-spacing: 1px; }
+        .header p { color: var(--text-muted); font-size: 14px; margin-top: 8px; }
+
         .badge-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            display: flex; justify-content: center; flex-wrap: wrap;
+            gap: 10px; margin-top: 15px;
         }
         .badge {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
+            padding: 6px 12px; border-radius: 4px; font-size: 13px;
+            font-weight: bold; color: #fff;
         }
         .badge.danger { background-color: var(--danger); }
         .badge.warning { background-color: var(--warning); }
+        .badge.primary { background-color: var(--primary); }
 
-        /* 响应式网格布局 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
             gap: 20px;
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
         }
 
-        /* 卡片基础样式 */
         .card {
             background: var(--card-bg);
             border-radius: 8px;
@@ -92,275 +69,844 @@
             flex-direction: column;
         }
         .card-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
+            font-size: 16px; font-weight: 600; margin-bottom: 15px;
             color: var(--text-main);
             border-left: 4px solid var(--primary);
             padding-left: 10px;
         }
+        .card-title .sub {
+            display: block; font-size: 12px; font-weight: 400;
+            color: var(--text-muted); margin-top: 3px;
+        }
 
-        /* 数据卡片 (KPI) */
+        /* KPI 卡片 */
         .kpi-grid {
             grid-column: span 12;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             gap: 15px;
         }
-        .kpi-card {
-            text-align: center;
-            padding: 15px;
+        .kpi-card { text-align: center; padding: 16px 12px; position: relative; }
+        .kpi-tag {
+            position: absolute; top: 8px; right: 10px;
+            font-size: 10px; padding: 2px 6px; border-radius: 3px;
+            background: #ecf0f1; color: var(--text-muted); font-weight: bold;
         }
-        .kpi-title { font-size: 14px; color: var(--text-muted); }
-        .kpi-value { font-size: 28px; font-weight: bold; margin: 10px 0; }
-        .kpi-sub { font-size: 13px; }
+        .kpi-title { font-size: 13px; color: var(--text-muted); }
+        .kpi-value { font-size: 26px; font-weight: bold; margin: 8px 0 4px; }
+        .kpi-sub { font-size: 12px; color: var(--text-muted); }
+        .kpi-sub.warn { color: var(--danger); font-weight: 600; }
+        .kpi-sub.ok { color: var(--success); font-weight: 600; }
+
         .text-danger { color: var(--danger); }
         .text-primary { color: var(--primary); }
         .text-warning { color: var(--warning); }
+        .text-success { color: var(--success); }
 
-        /* 图表容器：强制规定高度和宽度，防止 Flex 塌陷 */
-        .chart-container {
-            width: 100%;
-            height: 350px;
-            min-height: 350px; 
+        /* 控制面板 */
+        .control-panel {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-        
-        /* 各模块占位列数 */
+        .control-item label {
+            display: flex; justify-content: space-between; align-items: baseline;
+            font-size: 13px; color: var(--text-muted); margin-bottom: 8px;
+        }
+        .control-item .val {
+            font-size: 16px; font-weight: bold; color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .control-item input[type=range] {
+            width: 100%; accent-color: var(--primary); cursor: pointer;
+        }
+        .control-item .hint {
+            font-size: 11px; color: #bdc3c7; margin-top: 4px;
+        }
+
+        .chart-container {
+            width: 100%; height: 340px; min-height: 340px;
+        }
+        .chart-container.tall { height: 380px; min-height: 380px; }
+
+        .span-12 { grid-column: span 12; }
         .span-8 { grid-column: span 8; }
+        .span-7 { grid-column: span 7; }
         .span-6 { grid-column: span 6; }
+        .span-5 { grid-column: span 5; }
         .span-4 { grid-column: span 4; }
 
-        /* 移动端适配 */
+        /* 结论栏 */
+        .conclusion-bar {
+            grid-column: span 12;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ecf0f1;
+            padding: 24px 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.95;
+            box-shadow: 0 6px 16px rgba(44,62,80,0.25);
+        }
+        .conclusion-bar h3 {
+            font-size: 15px; margin-bottom: 12px; color: #f1c40f;
+            letter-spacing: 1px;
+        }
+        .conclusion-bar strong { color: #f1c40f; }
+        .conclusion-bar .hl { color: #e74c3c; font-weight: bold; }
+        .conclusion-bar .ok { color: #2ecc71; font-weight: bold; }
+        .conclusion-bar ul { margin: 8px 0 0 20px; }
+        .conclusion-bar li { margin-bottom: 4px; }
+
+        .note-card {
+            grid-column: span 12;
+            background: #fdfefe;
+            border: 1px dashed #bdc3c7;
+            font-size: 13px;
+            color: #566573;
+            line-height: 1.9;
+        }
+        .note-card b { color: var(--text-main); }
+        .note-card code {
+            background: #eaeded; padding: 1px 5px; border-radius: 3px;
+            font-size: 12px; color: #c0392b;
+        }
+
+        @media (max-width: 1100px) {
+            .span-8, .span-7, .span-6, .span-5, .span-4 { grid-column: span 12; }
+        }
         @media (max-width: 768px) {
-            .span-8, .span-6, .span-4 { grid-column: span 12; }
             .chart-container { height: 300px; min-height: 300px; }
-            .header h1 { font-size: 20px; }
-            .kpi-value { font-size: 24px; }
+            .header h1 { font-size: 19px; }
+            .kpi-value { font-size: 22px; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>*ST广糖（000911）现金流风险与财务困境多维度诊断</h1>
-        <p>数据基准：2026年半年度报告 (单位：人民币) | 分析视角：剔除利润粉饰，透视真实造血能力</p>
+        <h1>*ST广糖（000911）财务困境诊断与现金流压力测试引擎</h1>
+        <p>数据基准：2026 年半年度报告 | 模型视角：以"外部输血缺口"为核心的蒙特卡洛敏感性分析</p>
         <div class="badge-container">
             <span class="badge danger">⚠️ 资不抵债：资产负债率 100.2%</span>
             <span class="badge danger">📉 造血枯竭：经营现金流 -11.74 亿</span>
             <span class="badge warning">🚨 短债压顶：短期借款 28.64 亿</span>
             <span class="badge warning">⚖️ 合规风险：证监会立案调查中</span>
+            <span class="badge primary">🔬 模型状态：实时可调参数</span>
         </div>
     </div>
 
     <div class="grid-container">
-        <!-- 第一排：核心 KPI 指标 -->
+
+        <!-- ========== 第一排：模型输出 KPI ========== -->
         <div class="kpi-grid">
             <div class="card kpi-card">
-                <div class="kpi-title">营业收入</div>
-                <div class="kpi-value text-primary">15.82 亿</div>
-                <div class="kpi-sub text-primary">同比 +17.39% (规模扩大)</div>
+                <span class="kpi-tag">Z′-SCORE</span>
+                <div class="kpi-title">Altman Z′ 困境指数</div>
+                <div class="kpi-value text-danger" id="kpi-z">—</div>
+                <div class="kpi-sub warn" id="kpi-z-sub">—</div>
             </div>
             <div class="card kpi-card">
-                <div class="kpi-title">归母净利润</div>
-                <div class="kpi-value text-danger">-1,602.86 万</div>
-                <div class="kpi-sub text-danger">同比 -275.69% (由盈转亏)</div>
+                <span class="kpi-tag">MERTON</span>
+                <div class="kpi-title">距离违约 DD / 隐含 PD</div>
+                <div class="kpi-value text-danger" id="kpi-dd">—</div>
+                <div class="kpi-sub warn" id="kpi-dd-sub">—</div>
             </div>
             <div class="card kpi-card">
-                <div class="kpi-title">经营现金流净额</div>
-                <div class="kpi-value text-danger">-11.74 亿</div>
-                <div class="kpi-sub text-danger">同比 -474.65% (断崖失血)</div>
+                <span class="kpi-tag">MONTE CARLO</span>
+                <div class="kpi-title">半年现金缺口（中位数）</div>
+                <div class="kpi-value text-warning" id="kpi-gap">—</div>
+                <div class="kpi-sub" id="kpi-gap-sub">—</div>
             </div>
             <div class="card kpi-card">
-                <div class="kpi-title">归母净资产</div>
-                <div class="kpi-value text-danger">-8,233 万</div>
-                <div class="kpi-sub text-danger">较上年末进一步恶化</div>
+                <span class="kpi-tag">STRESS TEST</span>
+                <div class="kpi-title">大规模纾困概率 P(Gap&gt;15亿)</div>
+                <div class="kpi-value text-danger" id="kpi-pcrisis">—</div>
+                <div class="kpi-sub" id="kpi-pcrisis-sub">—</div>
             </div>
         </div>
 
-        <!-- 第二排：核心背离图 (左侧) + 债务结构 (右侧) -->
+        <!-- ========== 控制面板 ========== -->
+        <div class="control-panel">
+            <div class="control-item">
+                <label>白糖价格假设 <span class="val" id="val-price">5250 元/吨</span></label>
+                <input type="range" id="in-price" min="4500" max="6500" step="50" value="5250">
+                <div class="hint">基准：2026 年广西糖价 5100–5400 元/吨偏弱运行</div>
+            </div>
+            <div class="control-item">
+                <label>半年度销量假设 <span class="val" id="val-vol">30.13 万吨</span></label>
+                <input type="range" id="in-vol" min="20" max="45" step="0.5" value="30.13">
+                <div class="hint">基准：由 15.82 亿营收 / 5250 元/吨倒推</div>
+            </div>
+            <div class="control-item">
+                <label>短期债务再融资率 ρ <span class="val" id="val-rho">75%</span></label>
+                <input type="range" id="in-rho" min="0.2" max="0.95" step="0.05" value="0.75">
+                <div class="hint">基准：ST 公司银行续贷意愿折价后的滚续比例</div>
+            </div>
+        </div>
+
+        <!-- ========== 第二排 ========== -->
         <div class="card span-8">
-            <div class="card-title">核心矛盾：“营收虚胖”与“现金枯竭”的背离</div>
+            <div class="card-title">核心矛盾："营收虚胖"与"现金枯竭"的背离
+                <span class="sub">营收增长 17.39%，经营现金流却从 -2.04 亿恶化至 -11.74 亿</span>
+            </div>
             <div id="chart-divergence" class="chart-container"></div>
         </div>
         <div class="card span-4">
-            <div class="card-title">流动性枯竭：杯水车薪的现金储备</div>
-            <div id="chart-liquidity" class="chart-container"></div>
+            <div class="card-title">缺口分布：蒙特卡洛 5000 次模拟
+                <span class="sub">当前参数下的"外部输血需求"概率分布</span>
+            </div>
+            <div id="chart-gap-dist" class="chart-container"></div>
         </div>
 
-        <!-- 第三排：存货激增 (左侧) + 五维风险雷达 (右侧) -->
+        <!-- ========== 第三排 ========== -->
+        <div class="card span-7">
+            <div class="card-title">敏感性热力图：糖价 × 销量 → 现金缺口（亿元）
+                <span class="sub">深红 = 缺口大、需外部救助；白框标记当前参数位置，可点击单元格直接跳转</span>
+            </div>
+            <div id="chart-sens" class="chart-container tall"></div>
+        </div>
+        <div class="card span-5">
+            <div class="card-title">现金瀑布图：钱是怎么没的
+                <span class="sub">期初现金 → 经营失血 → 偿债 → 利息 → 新增融资 → 期末缺口</span>
+            </div>
+            <div id="chart-waterfall" class="chart-container tall"></div>
+        </div>
+
+        <!-- ========== 第四排 ========== -->
         <div class="card span-6">
-            <div class="card-title">存货异常堆积：3.93亿 → 12.48亿 (增长217%)</div>
+            <div class="card-title">存货异常堆积：3.93 亿 → 12.48 亿（+217%）
+                <span class="sub">存货周转天数约 150 天，糖价下行周期中的减值风险敞口</span>
+            </div>
             <div id="chart-inventory" class="chart-container"></div>
         </div>
         <div class="card span-6">
-            <div class="card-title">多维视角困境成因归因分析</div>
+            <div class="card-title">五维困境归因（定性评分，非量化基准）
+                <span class="sub">雷达图为专家经验赋值，仅用于叙事，不参与定量模型</span>
+            </div>
             <div id="chart-radar" class="chart-container"></div>
         </div>
+
+        <!-- ========== 结论栏 ========== -->
+        <div class="conclusion-bar" id="conclusion">
+            <h3>📌 模型实时结论</h3>
+            <div id="conclusion-body">计算中…</div>
+        </div>
+
+        <!-- ========== 假设与数据缺口 ========== -->
+        <div class="card note-card span-12">
+            <b>模型假设与已知局限：</b><br>
+            ① 现金流增量模型采用"锚定 + 弹性"结构：以 2026H1 实际值 <code>OCF₀ = -11.74 亿</code> 为锚，糖价变动对 OCF 的传导系数取 0.85（扣税、结算滞后后），销量边际贡献系数取 0.55；<br>
+            ② 存货释放假设：销量偏离基准 10% 对应释放约 3 亿营运资本，该系数基于"存货/半年营业成本 ≈ 150 天周转"的行业经验，属<strong>需用实际产销数据校准</strong>的关键参数；<br>
+            ③ 短期债务到期额 <code>D_s = 12.05 亿</code>，按短期借款 28.64 亿 × 40% + 一年内到期非流动负债 0.59 亿估算，<strong>需以年报附注中的到期分布表替换</strong>；<br>
+            ④ 再融资率 ρ 服从截断正态 N(0.75, 0.12²)，反映 ST 公司滚续能力的不确定性，基准值参考行业惯例；<br>
+            ⑤ Merton 模型采用 KMV 迭代法求解，股权市值取 8 亿（股价 2 元 × 4 亿股）、股权波动率 0.60，<strong>需以实际股价与历史波动率替换</strong>；<br>
+            ⑥ 蒙特卡洛模拟 5000 次，糖价波动率 8.5%（半年）、销量波动率 12%，两者独立。<br><br>
+            <b>建议补充的数据（按优先级）：</b> 有息负债期限结构明细 ｜ 货币资金受限比例 ｜ 半年度利息费用 ｜ 榨季累计产销率 ｜ 套期保值比例与盈亏 ｜ 南宁糖业/粤桂股份对标指标 ｜ 投资者索赔预计负债评估。
+        </div>
+
     </div>
 
     <script>
-        // 等待 DOM 完全加载后再渲染图表，防止高度计算错误
-        window.onload = function() {
-            // 如果 ECharts 依然未定义，给出提示
-            if (typeof echarts === 'undefined') {
-                alert('图表库加载失败，请检查您的网络连接，或刷新页面重试。');
-                return;
+    window.onload = function () {
+        if (typeof echarts === 'undefined') {
+            alert('图表库加载失败，请检查网络或刷新重试。');
+            return;
+        }
+
+        /* ============================================================
+           一、模型参数（所有假设集中于此，便于替换真实数据）
+           ============================================================ */
+        const P0      = 5250;     // 基准糖价 元/吨
+        const Q0      = 30.13;    // 基准半年销量 万吨
+        const REV0    = 15.82;    // 基准半年营收 亿元
+        const OCF0    = -11.74;   // 基准经营现金流 亿元
+        const M0      = 1.88;     // 期初货币资金 亿元
+        const DS      = 12.05;    // 半年内到期短期债务 亿元
+        const INT     = 0.99;     // 半年利息支出 亿元
+        const INV     = 12.48;    // 期末存货 亿元
+        const RHO0    = 0.75;     // 基准再融资率
+        const K_PRICE = 0.85;     // 糖价 → OCF 传导系数
+        const K_VOL   = 0.55;     // 销量 → OCF 边际贡献系数
+        const K_INV   = 3.0;      // 销量偏离 10% 释放的营运资本（亿元）
+        const K_IMPAIR= 0.50;     // 糖价下跌对应的存货减值系数
+        const THRESHOLDS = [5, 10, 15];  // 缺口风险分档（亿元）
+        const N_SIM   = 5000;
+
+        /* ============================================================
+           二、工具函数
+           ============================================================ */
+        function normCdf(x) {
+            const t = 1 / (1 + 0.2316419 * Math.abs(x));
+            const d = 0.3989423 * Math.exp(-x * x / 2);
+            let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+            return x > 0 ? 1 - p : p;
+        }
+        function randn() {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        }
+        function clamp(x, lo, hi) { return Math.min(hi, Math.max(lo, x)); }
+        function quantile(sorted, q) {
+            const pos = (sorted.length - 1) * q;
+            const base = Math.floor(pos);
+            const rest = pos - base;
+            return sorted[base + 1] !== undefined
+                ? sorted[base] + rest * (sorted[base + 1] - sorted[base])
+                : sorted[base];
+        }
+
+        /* ============================================================
+           三、核心模型
+           ============================================================ */
+        // 经营现金流增量模型
+        function calcOCF(P, Q) {
+            const dPrice  = REV0 * K_PRICE * (P / P0 - 1);
+            const dVol    = REV0 * K_VOL   * (Q / Q0 - 1);
+            const dInv    = K_INV * ((Q / Q0 - 1) / 0.10);
+            const impair  = Math.max(0, (P0 - P) / P0) * K_IMPAIR * INV;
+            return OCF0 + dPrice + dVol + dInv - impair;
+        }
+
+        // 半年现金缺口：Gap > 0 表示需要外部输血
+        function calcGap(P, Q, rho) {
+            const ocf = calcOCF(P, Q);
+            return DS * (1 - rho) + INT - M0 - ocf;
+        }
+
+        // 蒙特卡洛模拟
+        function monteCarlo(P, Q, rho0, n) {
+            const gaps = new Array(n);
+            const sigP = P * 0.085;
+            const sigQ = Q * 0.12;
+            for (let i = 0; i < n; i++) {
+                const Pi  = Math.max(3000, P + sigP * randn());
+                const Qi  = Math.max(5,    Q + sigQ * randn());
+                const ri  = clamp(rho0 + 0.12 * randn(), 0.10, 0.98);
+                gaps[i]   = calcGap(Pi, Qi, ri);
             }
+            return gaps;
+        }
 
-            // 全局字体与颜色配置
-            const fontFamily = '"Microsoft YaHei", sans-serif';
-            const colorDanger = '#e74c3c';
-            const colorPrimary = '#2980b9';
-            const colorGrey = '#95a5a6';
+        // Altman Z′（中国修正版）
+        function calcAltmanZ() {
+            const TA = 40.22;                       // 总资产 亿元
+            const X1 = (22.73 - 37.78) / TA;        // 营运资本 / 总资产
+            const X2 = -0.8233 / TA;                // 留存收益(以归母净资产近似) / 总资产
+            const X3 = (-0.16 + INT) / TA;          // EBIT / 总资产
+            const X4 = 8.0 / 38.1;                  // 股权市值 / 总负债
+            const X5 = REV0 / TA;                   // 营收 / 总资产
+            const Z  = 0.717 * X1 + 0.847 * X2 + 3.107 * X3 + 0.420 * X4 + 0.998 * X5;
+            return { Z, X1, X2, X3, X4, X5 };
+        }
 
-            const tooltipConfig = {
-                trigger: 'axis',
-                axisPointer: { type: 'shadow' },
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                borderColor: '#e1e8ed',
-                borderWidth: 1,
-                textStyle: { color: '#2c3e50', fontFamily: fontFamily },
-                extraCssText: 'box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 4px;'
-            };
+        // Merton 距离违约（KMV 迭代）
+        function calcMerton() {
+            const E = 8.0, D = 38.1, sigmaE = 0.60, r = 0.02, T = 1;
+            let V = E + D;
+            let sigmaV = sigmaE * E / (E + D);
+            let d1 = 0, Nd1 = 0;
+            for (let i = 0; i < 60; i++) {
+                d1 = (Math.log(V / D) + (r + 0.5 * sigmaV * sigmaV) * T) / (sigmaV * Math.sqrt(T));
+                const d2 = d1 - sigmaV * Math.sqrt(T);
+                Nd1 = normCdf(d1);
+                const Nd2 = normCdf(d2);
+                const sigmaV_new = sigmaE * E / (Nd1 * V);
+                const V_new = (E + D * Math.exp(-r * T) * Nd2) / Nd1;
+                if (Math.abs(V_new - V) < 1e-7 && Math.abs(sigmaV_new - sigmaV) < 1e-7) {
+                    V = V_new; sigmaV = sigmaV_new; break;
+                }
+                V = V_new; sigmaV = sigmaV_new;
+            }
+            d1 = (Math.log(V / D) + (r + 0.5 * sigmaV * sigmaV) * T) / (sigmaV * Math.sqrt(T));
+            const PD = normCdf(-d1);
+            return { V, sigmaV, DD: d1, PD };
+        }
 
-            // 1. 核心背离图
-            const chartDivergence = echarts.init(document.getElementById('chart-divergence'));
-            chartDivergence.setOption({
-                tooltip: tooltipConfig,
-                legend: { data: ['营业收入(亿元)', '经营现金流净额(亿元)', '归母净利润(百万元)'], bottom: 0, textStyle: { fontFamily: fontFamily } },
-                grid: { left: '3%', right: '3%', bottom: '15%', containLabel: true },
+        /* ============================================================
+           四、图表初始化
+           ============================================================ */
+        const fontFamily = '"Microsoft YaHei", sans-serif';
+        const C = { danger: '#e74c3c', primary: '#2980b9', warning: '#f39c12', success: '#27ae60', grey: '#95a5a6' };
+
+        const tooltipBase = {
+            trigger: 'axis',
+            axisPointer: { type: 'shadow' },
+            backgroundColor: 'rgba(255,255,255,0.96)',
+            borderColor: '#e1e8ed',
+            borderWidth: 1,
+            textStyle: { color: '#2c3e50', fontFamily: fontFamily }
+        };
+
+        const chartDivergence = echarts.init(document.getElementById('chart-divergence'));
+        const chartGapDist    = echarts.init(document.getElementById('chart-gap-dist'));
+        const chartSens       = echarts.init(document.getElementById('chart-sens'));
+        const chartWaterfall  = echarts.init(document.getElementById('chart-waterfall'));
+        const chartInventory  = echarts.init(document.getElementById('chart-inventory'));
+        const chartRadar      = echarts.init(document.getElementById('chart-radar'));
+
+        /* ---- 4.1 背离图（静态） ---- */
+        chartDivergence.setOption({
+            tooltip: tooltipBase,
+            legend: {
+                data: ['营业收入(亿元)', '经营现金流净额(亿元)', '归母净利润(百万元)'],
+                bottom: 0, textStyle: { fontFamily }
+            },
+            grid: { left: '3%', right: '3%', bottom: '18%', top: '8%', containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: ['上年同期 (2025H1)', '本期 (2026H1)'],
+                axisLabel: { fontFamily, fontWeight: 'bold' }
+            },
+            yAxis: [
+                { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
+                { type: 'value', name: '百万元', show: false }
+            ],
+            series: [
+                { name: '营业收入(亿元)', type: 'bar', data: [13.48, 15.82],
+                  itemStyle: { color: C.primary }, barWidth: '20%' },
+                { name: '经营现金流净额(亿元)', type: 'bar', data: [-2.04, -11.74],
+                  itemStyle: { color: C.danger }, barWidth: '20%' },
+                { name: '归母净利润(百万元)', type: 'line', yAxisIndex: 1,
+                  data: [9.12, -16.03], symbolSize: 11,
+                  lineStyle: { width: 4, color: C.warning }, itemStyle: { color: C.warning } }
+            ]
+        });
+
+        /* ---- 4.2 存货图（静态） ---- */
+        chartInventory.setOption({
+            tooltip: tooltipBase,
+            grid: { left: '3%', right: '3%', bottom: '10%', top: '15%', containLabel: true },
+            xAxis: {
+                type: 'category',
+                data: ['上年末 (2025末)', '本期期末 (2026H1)'],
+                axisLabel: { fontFamily, fontWeight: 'bold' }
+            },
+            yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
+            series: [{
+                type: 'bar', data: [3.93, 12.48], barWidth: '30%',
+                itemStyle: { color: p => p.dataIndex === 1 ? C.danger : C.grey },
+                label: { show: true, position: 'top', formatter: '{c} 亿元',
+                         fontFamily, fontWeight: 'bold' }
+            }]
+        });
+
+        /* ---- 4.3 雷达图（定性归因） ---- */
+        chartRadar.setOption({
+            tooltip: { trigger: 'item', textStyle: { fontFamily } },
+            legend: { data: ['*ST广糖', '行业平均水平'], bottom: 0, textStyle: { fontFamily } },
+            radar: {
+                indicator: [
+                    { name: '季节周期付现压力', max: 10 },
+                    { name: '糖价下行造血不足', max: 10 },
+                    { name: '非糖业务资金占用', max: 10 },
+                    { name: '短债长用利息侵蚀', max: 10 },
+                    { name: '内控缺陷与合规风险', max: 10 }
+                ],
+                axisName: { color: '#2c3e50', fontFamily, fontSize: 12 },
+                splitArea: { areaStyle: { color: ['#f8f9fa', '#ffffff'] } },
+                radius: '62%'
+            },
+            series: [{
+                type: 'radar',
+                data: [
+                    { value: [9.5, 8.5, 6.0, 9.0, 10.0], name: '*ST广糖',
+                      areaStyle: { color: 'rgba(231,76,60,0.30)' },
+                      lineStyle: { color: C.danger, width: 3 }, itemStyle: { color: C.danger } },
+                    { value: [5.0, 5.0, 4.0, 5.0, 3.0], name: '行业平均水平',
+                      areaStyle: { color: 'rgba(41,128,185,0.10)' },
+                      lineStyle: { color: C.primary, width: 2, type: 'dashed' },
+                      itemStyle: { color: C.primary } }
+                ]
+            }]
+        });
+
+        /* ============================================================
+           五、状态与渲染
+           ============================================================ */
+        const state = { P: 5250, Q: 30.13, rho: 0.75 };
+        let currentGaps = [];
+
+        // 糖价/销量档位（热力图坐标轴）
+        const PRICE_GRID = [4750, 5000, 5250, 5500, 5750, 6000, 6250];
+        const VOL_GRID   = [24, 27, 30.13, 33, 36, 39];
+
+        /* ---- 5.1 KPI 更新 ---- */
+        function updateKPI() {
+            const z = calcAltmanZ();
+            document.getElementById('kpi-z').textContent = z.Z.toFixed(2);
+            document.getElementById('kpi-z-sub').textContent =
+                z.Z < 1.23 ? '深度困境区（阈值 < 1.23）' : (z.Z < 2.90 ? '灰色区域' : '安全区');
+
+            const m = calcMerton();
+            document.getElementById('kpi-dd').textContent = 'DD = ' + m.DD.toFixed(2);
+            document.getElementById('kpi-dd-sub').textContent =
+                '隐含 PD ≈ ' + (m.PD * 100).toFixed(1) + '% | ' +
+                (m.DD < 1 ? '极高风险' : m.DD < 2 ? '高风险区' : '需持续关注');
+
+            currentGaps = monteCarlo(state.P, state.Q, state.rho, N_SIM);
+            const sorted = [...currentGaps].sort((a, b) => a - b);
+            const med = quantile(sorted, 0.5);
+            const p10 = quantile(sorted, 0.10);
+            const p90 = quantile(sorted, 0.90);
+            document.getElementById('kpi-gap').textContent = med.toFixed(1) + ' 亿';
+            document.getElementById('kpi-gap-sub').textContent =
+                'P10–P90 区间：' + p10.toFixed(1) + ' ~ ' + p90.toFixed(1) + ' 亿';
+
+            const pCrisis = currentGaps.filter(g => g > 15).length / N_SIM;
+            document.getElementById('kpi-pcrisis').textContent = (pCrisis * 100).toFixed(1) + '%';
+            const pModerate = currentGaps.filter(g => g > 10).length / N_SIM;
+            document.getElementById('kpi-pcrisis-sub').textContent =
+                'P(Gap>10亿) = ' + (pModerate * 100).toFixed(1) + '%';
+
+            return { med, p10, p90, pCrisis, pModerate };
+        }
+
+        /* ---- 5.2 缺口分布直方图 ---- */
+        function updateGapDist() {
+            const min = Math.min(...currentGaps);
+            const max = Math.max(...currentGaps);
+            const binCount = 24;
+            const binW = (max - min) / binCount || 1;
+            const bins = new Array(binCount).fill(0);
+            const binCenters = new Array(binCount);
+
+            for (let i = 0; i < binCount; i++) binCenters[i] = +(min + (i + 0.5) * binW).toFixed(1);
+            currentGaps.forEach(g => {
+                let idx = Math.floor((g - min) / binW);
+                if (idx >= binCount) idx = binCount - 1;
+                if (idx < 0) idx = 0;
+                bins[idx]++;
+            });
+
+            const colors = binCenters.map(c =>
+                c < 5 ? C.success : c < 10 ? '#f1c40f' : c < 15 ? C.warning : C.danger
+            );
+
+            chartGapDist.setOption({
+                tooltip: {
+                    trigger: 'axis', axisPointer: { type: 'shadow' },
+                    backgroundColor: 'rgba(255,255,255,0.96)',
+                    borderColor: '#e1e8ed', borderWidth: 1,
+                    textStyle: { color: '#2c3e50', fontFamily },
+                    formatter: p => {
+                        if (!p.length) return '';
+                        return '缺口区间中心：' + p[0].name + ' 亿<br/>模拟频次：' + p[0].value +
+                               ' 次<br/>频率：' + (p[0].value / N_SIM * 100).toFixed(2) + '%';
+                    }
+                },
+                grid: { left: '12%', right: '6%', bottom: '18%', top: '12%' },
+                xAxis: {
+                    type: 'category', data: binCenters,
+                    axisLabel: { fontFamily, fontSize: 10, rotate: 45, interval: 2 },
+                    name: '缺口(亿)', nameLocation: 'middle', nameGap: 42,
+                    nameTextStyle: { fontFamily, fontSize: 11 }
+                },
+                yAxis: {
+                    type: 'value', name: '频次',
+                    nameTextStyle: { fontFamily, fontSize: 11 },
+                    axisLabel: { fontFamily, fontSize: 10 }
+                },
+                series: [{
+                    type: 'bar', data: bins.map((v, i) => ({ value: v, itemStyle: { color: colors[i] } })),
+                    barWidth: '92%',
+                    markLine: {
+                        symbol: 'none', silent: true,
+                        lineStyle: { type: 'dashed', color: C.danger, width: 1.5 },
+                        label: { fontFamily, fontSize: 10, color: C.danger },
+                        data: THRESHOLDS.map(t => ({ xAxis: t, label: { formatter: t + '亿' } }))
+                    }
+                }]
+            });
+        }
+
+        /* ---- 5.3 敏感性热力图 ---- */
+        function buildSensData() {
+            const data = [];
+            for (let i = 0; i < VOL_GRID.length; i++) {
+                for (let j = 0; j < PRICE_GRID.length; j++) {
+                    data.push([j, i, +calcGap(PRICE_GRID[j], VOL_GRID[i], RHO0).toFixed(2)]);
+                }
+            }
+            return data;
+        }
+
+        function nearestIdx(arr, v) {
+            let best = 0, bd = Infinity;
+            arr.forEach((x, i) => { const d = Math.abs(x - v); if (d < bd) { bd = d; best = i; } });
+            return best;
+        }
+
+        function updateSens() {
+            const data = buildSensData();
+            const vals = data.map(d => d[2]);
+            const vmin = Math.min(...vals), vmax = Math.max(...vals);
+            const curX = nearestIdx(PRICE_GRID, state.P);
+            const curY = nearestIdx(VOL_GRID, state.Q);
+
+            chartSens.setOption({
+                tooltip: {
+                    trigger: 'item',
+                    backgroundColor: 'rgba(255,255,255,0.96)',
+                    borderColor: '#e1e8ed', borderWidth: 1,
+                    textStyle: { color: '#2c3e50', fontFamily },
+                    formatter: p =>
+                        '糖价：' + PRICE_GRID[p.data[0]] + ' 元/吨<br/>' +
+                        '销量：' + VOL_GRID[p.data[1]] + ' 万吨<br/>' +
+                        '现金缺口：<b>' + p.data[2] + ' 亿</b>'
+                },
+                grid: { left: '10%', right: '5%', bottom: '18%', top: '6%' },
+                xAxis: {
+                    type: 'category', data: PRICE_GRID,
+                    name: '糖价(元/吨)', nameLocation: 'middle', nameGap: 32,
+                    nameTextStyle: { fontFamily, fontSize: 11 },
+                    axisLabel: { fontFamily, fontSize: 11 }, splitArea: { show: false }
+                },
+                yAxis: {
+                    type: 'category', data: VOL_GRID, inverse: true,
+                    name: '销量(万吨)', nameLocation: 'middle', nameGap: 40,
+                    nameTextStyle: { fontFamily, fontSize: 11 },
+                    axisLabel: { fontFamily, fontSize: 11 }, splitArea: { show: false }
+                },
+                visualMap: {
+                    min: Math.floor(vmin), max: Math.ceil(vmax),
+                    calculable: false, orient: 'horizontal',
+                    left: 'center', bottom: 0,
+                    textStyle: { fontFamily, fontSize: 11 },
+                    inRange: { color: ['#2ecc71', '#f1c40f', '#e67e22', '#e74c3c'] }
+                },
+                series: [{
+                    name: '现金缺口',
+                    type: 'heatmap',
+                    data: data,
+                    label: {
+                        show: true, fontFamily, fontSize: 11, fontWeight: 'bold',
+                        formatter: p => p.data[2].toFixed(1),
+                        color: '#fff'
+                    },
+                    itemStyle: {
+                        borderColor: '#fff', borderWidth: 2,
+                        borderRadius: 3
+                    },
+                    emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(0,0,0,0.3)' } },
+                    markPoint: {
+                        symbol: 'rect',
+                        symbolSize: [0, 0],
+                        data: []
+                    }
+                }, {
+                    // 当前参数位置的白框标记
+                    type: 'scatter',
+                    data: [[curX, curY]],
+                    symbol: 'rect',
+                    symbolSize: [64, 44],
+                    itemStyle: {
+                        color: 'transparent',
+                        borderColor: '#ffffff',
+                        borderWidth: 3
+                    },
+                    z: 10,
+                    silent: true
+                }]
+            }, true);
+        }
+
+        // 点击热力图跳转
+        chartSens.on('click', function (p) {
+            if (p.seriesType !== 'heatmap') return;
+            setState(PRICE_GRID[p.data[0]], VOL_GRID[p.data[1]], state.rho);
+        });
+
+        /* ---- 5.4 现金瀑布图 ---- */
+        function updateWaterfall() {
+            const ocf = calcOCF(state.P, state.Q);
+            const newFin = state.rho * DS;
+
+            const items = [
+                { name: '期初现金', v: M0,    type: 'total' },
+                { name: '经营现金流', v: ocf, type: 'delta' },
+                { name: '债务到期', v: -DS,   type: 'delta' },
+                { name: '利息支出', v: -INT,  type: 'delta' },
+                { name: '新增融资', v: newFin, type: 'delta' },
+                { name: '期末现金', v: null,  type: 'total' }
+            ];
+
+            let cum = 0;
+            const placeholder = [], real = [], colors = [], labels = [];
+
+            items.forEach((it, idx) => {
+                if (it.type === 'total') {
+                    if (idx === 0) {
+                        cum = it.v;
+                        placeholder.push(0);
+                        real.push(it.v);
+                        labels.push(it.v.toFixed(2));
+                        colors.push(C.primary);
+                    } else {
+                        const low = Math.min(0, cum);
+                        placeholder.push(low);
+                        real.push(Math.abs(cum));
+                        labels.push(cum.toFixed(2));
+                        colors.push(cum < 0 ? C.danger : C.success);
+                    }
+                } else {
+                    if (it.v >= 0) {
+                        placeholder.push(cum);
+                        real.push(it.v);
+                        cum += it.v;
+                        labels.push('+' + it.v.toFixed(2));
+                        colors.push(C.success);
+                    } else {
+                        cum += it.v;
+                        placeholder.push(cum);
+                        real.push(-it.v);
+                        labels.push(it.v.toFixed(2));
+                        colors.push(C.danger);
+                    }
+                }
+            });
+
+            chartWaterfall.setOption({
+                tooltip: {
+                    trigger: 'axis', axisPointer: { type: 'shadow' },
+                    backgroundColor: 'rgba(255,255,255,0.96)',
+                    borderColor: '#e1e8ed', borderWidth: 1,
+                    textStyle: { color: '#2c3e50', fontFamily },
+                    formatter: p => {
+                        const i = p[0].dataIndex;
+                        return items[i].name + '：<b>' + labels[i] + ' 亿</b>';
+                    }
+                },
+                grid: { left: '3%', right: '5%', bottom: '18%', top: '10%', containLabel: true },
                 xAxis: {
                     type: 'category',
-                    data: ['上年同期 (2025H1)', '本期 (2026H1)'],
-                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
+                    data: items.map(i => i.name),
+                    axisLabel: { fontFamily, fontSize: 11, interval: 0, rotate: 30 }
                 },
-                yAxis: [
-                    { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
-                    { type: 'value', name: '百万元', show: false }
-                ],
+                yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
                 series: [
+                    { type: 'bar', stack: 'wf', data: placeholder, itemStyle: { color: 'transparent' }, silent: true },
                     {
-                        name: '营业收入(亿元)',
-                        type: 'bar',
-                        data: [13.48, 15.82],
-                        itemStyle: { color: colorPrimary },
-                        barWidth: '20%'
-                    },
-                    {
-                        name: '经营现金流净额(亿元)',
-                        type: 'bar',
-                        data: [-2.04, -11.74],
-                        itemStyle: { color: colorDanger },
-                        barWidth: '20%'
-                    },
-                    {
-                        name: '归母净利润(百万元)',
-                        type: 'line',
-                        yAxisIndex: 1,
-                        data: [9.12, -16.03],
-                        symbolSize: 10,
-                        lineStyle: { width: 4, color: '#f39c12' },
-                        itemStyle: { color: '#f39c12' }
+                        type: 'bar', stack: 'wf', data: real.map((v, i) => ({ value: v, itemStyle: { color: colors[i] } })),
+                        barWidth: '52%',
+                        label: {
+                            show: true, position: 'top', fontFamily, fontSize: 11, fontWeight: 'bold',
+                            formatter: p => labels[p.dataIndex]
+                        }
                     }
                 ]
             });
+        }
 
-            // 2. 流动性对比图
-            const chartLiquidity = echarts.init(document.getElementById('chart-liquidity'));
-            chartLiquidity.setOption({
-                tooltip: tooltipConfig,
-                grid: { left: '10%', right: '5%', bottom: '10%', top: '15%' },
-                xAxis: {
-                    type: 'category',
-                    data: ['货币资金', '短期借款'],
-                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
-                },
-                yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
-                series: [{
-                    type: 'bar',
-                    data: [
-                        { value: 1.88, itemStyle: { color: colorPrimary } }, 
-                        { value: 28.64, itemStyle: { color: colorDanger } }
-                    ],
-                    barWidth: '40%',
-                    label: { show: true, position: 'top', formatter: '{c} 亿', fontFamily: fontFamily, fontWeight: 'bold' },
-                    markLine: {
-                        symbol: 'none',
-                        data: [{ yAxis: 1.88, name: '现金储备红线' }],
-                        lineStyle: { type: 'dashed', color: colorDanger }
-                    }
-                }]
-            });
+        /* ---- 5.5 结论生成 ---- */
+        function updateConclusion(stats) {
+            const gapNow = calcGap(state.P, state.Q, state.rho);
+            const ocfNow = calcOCF(state.P, state.Q);
 
-            // 3. 存货堆积图
-            const chartInventory = echarts.init(document.getElementById('chart-inventory'));
-            chartInventory.setOption({
-                tooltip: tooltipConfig,
-                grid: { left: '3%', right: '3%', bottom: '10%', containLabel: true },
-                xAxis: {
-                    type: 'category',
-                    data: ['上年末 (2025末)', '本期期末 (2026H1)'],
-                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
-                },
-                yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
-                series: [{
-                    type: 'bar',
-                    data: [3.93, 12.48],
-                    barWidth: '30%',
-                    itemStyle: {
-                        color: function(params) {
-                            return params.dataIndex === 1 ? colorDanger : colorGrey;
-                        }
-                    },
-                    label: { show: true, position: 'top', formatter: '{c} 亿元', fontFamily: fontFamily, fontWeight: 'bold' }
-                }]
-            });
+            // 打平阈值：糖价需涨到多少，缺口 ≤ 5 亿
+            let pStar = null;
+            for (let p = P0; p <= 9000; p += 10) {
+                if (calcGap(p, state.Q, state.rho) <= 5) { pStar = p; break; }
+            }
+            // 销量需涨到多少，缺口 ≤ 5 亿
+            let qStar = null;
+            for (let q = state.Q; q <= 150; q += 0.2) {
+                if (calcGap(state.P, q, state.rho) <= 5) { qStar = q; break; }
+            }
 
-            // 4. 雷达图 (五维困境)
-            const chartRadar = echarts.init(document.getElementById('chart-radar'));
-            chartRadar.setOption({
-                tooltip: { trigger: 'item', textStyle: { fontFamily: fontFamily } },
-                legend: { data: ['*ST广糖', '行业平均水平'], bottom: 0, textStyle: { fontFamily: fontFamily } },
-                radar: {
-                    indicator: [
-                        { name: '季节周期付现压力', max: 10 },
-                        { name: '糖价下行造血不足', max: 10 },
-                        { name: '非糖业务资金占用', max: 10 },
-                        { name: '短债长用利息侵蚀', max: 10 },
-                        { name: '内控缺陷与合规风险', max: 10 }
-                    ],
-                    axisName: { color: '#2c3e50', fontFamily: fontFamily, fontSize: 13 },
-                    splitArea: { areaStyle: { color: ['#f8f9fa', '#ffffff'] } }
-                },
-                series: [{
-                    type: 'radar',
-                    data: [
-                        {
-                            value: [9.5, 8.5, 6.0, 9.0, 10.0],
-                            name: '*ST广糖',
-                            areaStyle: { color: 'rgba(231, 76, 60, 0.3)' },
-                            lineStyle: { color: colorDanger, width: 3 },
-                            itemStyle: { color: colorDanger }
-                        },
-                        {
-                            value: [5.0, 5.0, 4.0, 5.0, 3.0],
-                            name: '行业平均水平',
-                            areaStyle: { color: 'rgba(41, 128, 185, 0.1)' },
-                            lineStyle: { color: colorPrimary, width: 2, type: 'dashed' },
-                            itemStyle: { color: colorPrimary }
-                        }
-                    ]
-                }]
-            });
+            // 敏感性：糖价 ±10% 与销量 ±10% 对缺口的一阶影响
+            const gapPriceUp   = calcGap(state.P * 1.10, state.Q, state.rho);
+            const gapPriceDown = calcGap(state.P * 0.90, state.Q, state.rho);
+            const gapVolUp     = calcGap(state.P, state.Q * 1.10, state.rho);
+            const gapVolDown   = calcGap(state.P, state.Q * 0.90, state.rho);
+            const sensPrice = Math.abs(gapPriceUp - gapPriceDown) / 2;
+            const sensVol   = Math.abs(gapVolUp - gapVolDown) / 2;
 
-            // 确保所有图表在窗口尺寸变化时自适应
-            window.addEventListener('resize', function() {
-                chartDivergence.resize();
-                chartLiquidity.resize();
-                chartInventory.resize();
-                chartRadar.resize();
-            });
-        };
+            const pCrisis = stats.pCrisis * 100;
+            const pModerate = stats.pModerate * 100;
+
+            const pricePart = pStar
+                ? `糖价须升至 <strong>${pStar} 元/吨</strong>（较基准 +${((pStar / P0 - 1) * 100).toFixed(1)}%）`
+                : `在 9000 元/吨的糖价上限内<strong>无法打平</strong>`;
+
+            const volPart = qStar
+                ? `销量须升至 <strong>${qStar.toFixed(1)} 万吨</strong>（较基准 +${((qStar / Q0 - 1) * 100).toFixed(1)}%）`
+                : `在 150 万吨的销量上限内<strong>无法打平</strong>`;
+
+            const dominant = sensPrice >= sensVol
+                ? `糖价（±10% 对应缺口变动约 ±${sensPrice.toFixed(2)} 亿）`
+                : `销量（±10% 对应缺口变动约 ±${sensVol.toFixed(2)} 亿）`;
+
+            document.getElementById('conclusion-body').innerHTML =
+                `在当前参数（糖价 <strong>${state.P} 元/吨</strong>、销量 <strong>${state.Q.toFixed(1)} 万吨</strong>、再融资率 <strong>${(state.rho * 100).toFixed(0)}%</strong>）下：` +
+                `<ul>` +
+                `<li>本半年经营现金流为 <span class="hl">${ocfNow.toFixed(2)} 亿</span>，` +
+                `扣除债务到期与利息后，需外部补足的现金缺口为 <span class="hl">${gapNow.toFixed(2)} 亿</span>；` +
+                `蒙特卡洛 5000 次模拟的中位缺口为 <strong>${stats.med.toFixed(2)} 亿</strong>，` +
+                `P10–P90 区间为 <strong>${stats.p10.toFixed(2)} ~ ${stats.p90.toFixed(2)} 亿</strong>。</li>` +
+                `<li>需要 <strong>超过 10 亿</strong> 纾困资金的概率为 <span class="hl">${pModerate.toFixed(1)}%</span>，` +
+                `需要 <strong>超过 15 亿</strong> 的概率为 <span class="hl">${pCrisis.toFixed(1)}%</span>。` +
+                `${pCrisis > 50 ? '在多数情景下，公司已无法依靠自身经营与常规融资维持运转。' : '仍存在一定比例的情景可通过常规融资覆盖。'}</li>` +
+                `<li>敏感性排序：<strong>${dominant}</strong> 是当前缺口的第一驱动变量；` +
+                `若要让缺口压缩至 5 亿以内（常规融资可覆盖区间），${pricePart}，或${volPart}。</li>` +
+                `<li>交叉验证：Altman Z′ = <strong>${calcAltmanZ().Z.toFixed(2)}</strong>（深度困境区），` +
+                `Merton DD = <strong>${calcMerton().DD.toFixed(2)}</strong>、隐含 PD ≈ <strong>${(calcMerton().PD * 100).toFixed(1)}%</strong>。` +
+                `两者均指向困境，但 Merton DD 位于 1–2 高风险区而非极值，` +
+                `说明市场定价中仍包含一定的"重组期权/壳价值"预期，<strong>会计指标与市场指标之间的缺口本身即是研究价值所在</strong>。</li>` +
+                `</ul>`;
+        }
+
+        /* ---- 5.6 总渲染 ---- */
+        function renderAll() {
+            const stats = updateKPI();
+            updateGapDist();
+            updateSens();
+            updateWaterfall();
+            updateConclusion(stats);
+        }
+
+        /* ============================================================
+           六、交互绑定
+           ============================================================ */
+        function setState(P, Q, rho) {
+            state.P = P;
+            state.Q = Q;
+            state.rho = rho;
+            document.getElementById('in-price').value = P;
+            document.getElementById('in-vol').value = Q;
+            document.getElementById('in-rho').value = rho;
+            document.getElementById('val-price').textContent = P + ' 元/吨';
+            document.getElementById('val-vol').textContent = Q.toFixed(1) + ' 万吨';
+            document.getElementById('val-rho').textContent = (rho * 100).toFixed(0) + '%';
+            renderAll();
+        }
+
+        document.getElementById('in-price').addEventListener('input', function () {
+            setState(+this.value, state.Q, state.rho);
+        });
+        document.getElementById('in-vol').addEventListener('input', function () {
+            setState(state.P, +this.value, state.rho);
+        });
+        document.getElementById('in-rho').addEventListener('input', function () {
+            setState(state.P, state.Q, +this.value);
+        });
+
+        /* ---- 初始化 ---- */
+        renderAll();
+
+        /* ---- 响应式 ---- */
+        window.addEventListener('resize', function () {
+            [chartDivergence, chartGapDist, chartSens, chartWaterfall, chartInventory, chartRadar]
+                .forEach(c => c.resize());
+        });
+    };
     </script>
 </body>
 </html>
