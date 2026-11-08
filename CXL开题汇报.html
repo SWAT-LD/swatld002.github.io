@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>*ST广糖 2026H1 财务困境与现金流风险分析大屏</title>
+    
+    <!-- 引入 ECharts，带备用 CDN 机制 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <script>
+        // 检测 ECharts 是否加载成功，若失败则切换到国内极速 CDN
+        if (typeof echarts === 'undefined') {
+            document.write('<script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.5.0/echarts.min.js"><\/script>');
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --danger: #e74c3c;
+            --primary: #2980b9;
+            --warning: #f39c12;
+            --border: #e1e8ed;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* 顶部标题区 */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .badge.danger { background-color: var(--danger); }
+        .badge.warning { background-color: var(--warning); }
+
+        /* 响应式网格布局 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 卡片基础样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        /* 数据卡片 (KPI) */
+        .kpi-grid {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .kpi-card {
+            text-align: center;
+            padding: 15px;
+        }
+        .kpi-title { font-size: 14px; color: var(--text-muted); }
+        .kpi-value { font-size: 28px; font-weight: bold; margin: 10px 0; }
+        .kpi-sub { font-size: 13px; }
+        .text-danger { color: var(--danger); }
+        .text-primary { color: var(--primary); }
+        .text-warning { color: var(--warning); }
+
+        /* 图表容器：强制规定高度和宽度，防止 Flex 塌陷 */
+        .chart-container {
+            width: 100%;
+            height: 350px;
+            min-height: 350px; 
+        }
+        
+        /* 各模块占位列数 */
+        .span-8 { grid-column: span 8; }
+        .span-6 { grid-column: span 6; }
+        .span-4 { grid-column: span 4; }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .span-8, .span-6, .span-4 { grid-column: span 12; }
+            .chart-container { height: 300px; min-height: 300px; }
+            .header h1 { font-size: 20px; }
+            .kpi-value { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>*ST广糖（000911）现金流风险与财务困境多维度诊断</h1>
+        <p>数据基准：2026年半年度报告 (单位：人民币) | 分析视角：剔除利润粉饰，透视真实造血能力</p>
+        <div class="badge-container">
+            <span class="badge danger">⚠️ 资不抵债：资产负债率 100.2%</span>
+            <span class="badge danger">📉 造血枯竭：经营现金流 -11.74 亿</span>
+            <span class="badge warning">🚨 短债压顶：短期借款 28.64 亿</span>
+            <span class="badge warning">⚖️ 合规风险：证监会立案调查中</span>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <!-- 第一排：核心 KPI 指标 -->
+        <div class="kpi-grid">
+            <div class="card kpi-card">
+                <div class="kpi-title">营业收入</div>
+                <div class="kpi-value text-primary">15.82 亿</div>
+                <div class="kpi-sub text-primary">同比 +17.39% (规模扩大)</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-title">归母净利润</div>
+                <div class="kpi-value text-danger">-1,602.86 万</div>
+                <div class="kpi-sub text-danger">同比 -275.69% (由盈转亏)</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-title">经营现金流净额</div>
+                <div class="kpi-value text-danger">-11.74 亿</div>
+                <div class="kpi-sub text-danger">同比 -474.65% (断崖失血)</div>
+            </div>
+            <div class="card kpi-card">
+                <div class="kpi-title">归母净资产</div>
+                <div class="kpi-value text-danger">-8,233 万</div>
+                <div class="kpi-sub text-danger">较上年末进一步恶化</div>
+            </div>
+        </div>
+
+        <!-- 第二排：核心背离图 (左侧) + 债务结构 (右侧) -->
+        <div class="card span-8">
+            <div class="card-title">核心矛盾：“营收虚胖”与“现金枯竭”的背离</div>
+            <div id="chart-divergence" class="chart-container"></div>
+        </div>
+        <div class="card span-4">
+            <div class="card-title">流动性枯竭：杯水车薪的现金储备</div>
+            <div id="chart-liquidity" class="chart-container"></div>
+        </div>
+
+        <!-- 第三排：存货激增 (左侧) + 五维风险雷达 (右侧) -->
+        <div class="card span-6">
+            <div class="card-title">存货异常堆积：3.93亿 → 12.48亿 (增长217%)</div>
+            <div id="chart-inventory" class="chart-container"></div>
+        </div>
+        <div class="card span-6">
+            <div class="card-title">多维视角困境成因归因分析</div>
+            <div id="chart-radar" class="chart-container"></div>
+        </div>
+    </div>
+
+    <script>
+        // 等待 DOM 完全加载后再渲染图表，防止高度计算错误
+        window.onload = function() {
+            // 如果 ECharts 依然未定义，给出提示
+            if (typeof echarts === 'undefined') {
+                alert('图表库加载失败，请检查您的网络连接，或刷新页面重试。');
+                return;
+            }
+
+            // 全局字体与颜色配置
+            const fontFamily = '"Microsoft YaHei", sans-serif';
+            const colorDanger = '#e74c3c';
+            const colorPrimary = '#2980b9';
+            const colorGrey = '#95a5a6';
+
+            const tooltipConfig = {
+                trigger: 'axis',
+                axisPointer: { type: 'shadow' },
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderColor: '#e1e8ed',
+                borderWidth: 1,
+                textStyle: { color: '#2c3e50', fontFamily: fontFamily },
+                extraCssText: 'box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 4px;'
+            };
+
+            // 1. 核心背离图
+            const chartDivergence = echarts.init(document.getElementById('chart-divergence'));
+            chartDivergence.setOption({
+                tooltip: tooltipConfig,
+                legend: { data: ['营业收入(亿元)', '经营现金流净额(亿元)', '归母净利润(百万元)'], bottom: 0, textStyle: { fontFamily: fontFamily } },
+                grid: { left: '3%', right: '3%', bottom: '15%', containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: ['上年同期 (2025H1)', '本期 (2026H1)'],
+                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
+                },
+                yAxis: [
+                    { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
+                    { type: 'value', name: '百万元', show: false }
+                ],
+                series: [
+                    {
+                        name: '营业收入(亿元)',
+                        type: 'bar',
+                        data: [13.48, 15.82],
+                        itemStyle: { color: colorPrimary },
+                        barWidth: '20%'
+                    },
+                    {
+                        name: '经营现金流净额(亿元)',
+                        type: 'bar',
+                        data: [-2.04, -11.74],
+                        itemStyle: { color: colorDanger },
+                        barWidth: '20%'
+                    },
+                    {
+                        name: '归母净利润(百万元)',
+                        type: 'line',
+                        yAxisIndex: 1,
+                        data: [9.12, -16.03],
+                        symbolSize: 10,
+                        lineStyle: { width: 4, color: '#f39c12' },
+                        itemStyle: { color: '#f39c12' }
+                    }
+                ]
+            });
+
+            // 2. 流动性对比图
+            const chartLiquidity = echarts.init(document.getElementById('chart-liquidity'));
+            chartLiquidity.setOption({
+                tooltip: tooltipConfig,
+                grid: { left: '10%', right: '5%', bottom: '10%', top: '15%' },
+                xAxis: {
+                    type: 'category',
+                    data: ['货币资金', '短期借款'],
+                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
+                },
+                yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
+                series: [{
+                    type: 'bar',
+                    data: [
+                        { value: 1.88, itemStyle: { color: colorPrimary } }, 
+                        { value: 28.64, itemStyle: { color: colorDanger } }
+                    ],
+                    barWidth: '40%',
+                    label: { show: true, position: 'top', formatter: '{c} 亿', fontFamily: fontFamily, fontWeight: 'bold' },
+                    markLine: {
+                        symbol: 'none',
+                        data: [{ yAxis: 1.88, name: '现金储备红线' }],
+                        lineStyle: { type: 'dashed', color: colorDanger }
+                    }
+                }]
+            });
+
+            // 3. 存货堆积图
+            const chartInventory = echarts.init(document.getElementById('chart-inventory'));
+            chartInventory.setOption({
+                tooltip: tooltipConfig,
+                grid: { left: '3%', right: '3%', bottom: '10%', containLabel: true },
+                xAxis: {
+                    type: 'category',
+                    data: ['上年末 (2025末)', '本期期末 (2026H1)'],
+                    axisLabel: { fontFamily: fontFamily, fontWeight: 'bold' }
+                },
+                yAxis: { type: 'value', name: '亿元', nameTextStyle: { fontFamily } },
+                series: [{
+                    type: 'bar',
+                    data: [3.93, 12.48],
+                    barWidth: '30%',
+                    itemStyle: {
+                        color: function(params) {
+                            return params.dataIndex === 1 ? colorDanger : colorGrey;
+                        }
+                    },
+                    label: { show: true, position: 'top', formatter: '{c} 亿元', fontFamily: fontFamily, fontWeight: 'bold' }
+                }]
+            });
+
+            // 4. 雷达图 (五维困境)
+            const chartRadar = echarts.init(document.getElementById('chart-radar'));
+            chartRadar.setOption({
+                tooltip: { trigger: 'item', textStyle: { fontFamily: fontFamily } },
+                legend: { data: ['*ST广糖', '行业平均水平'], bottom: 0, textStyle: { fontFamily: fontFamily } },
+                radar: {
+                    indicator: [
+                        { name: '季节周期付现压力', max: 10 },
+                        { name: '糖价下行造血不足', max: 10 },
+                        { name: '非糖业务资金占用', max: 10 },
+                        { name: '短债长用利息侵蚀', max: 10 },
+                        { name: '内控缺陷与合规风险', max: 10 }
+                    ],
+                    axisName: { color: '#2c3e50', fontFamily: fontFamily, fontSize: 13 },
+                    splitArea: { areaStyle: { color: ['#f8f9fa', '#ffffff'] } }
+                },
+                series: [{
+                    type: 'radar',
+                    data: [
+                        {
+                            value: [9.5, 8.5, 6.0, 9.0, 10.0],
+                            name: '*ST广糖',
+                            areaStyle: { color: 'rgba(231, 76, 60, 0.3)' },
+                            lineStyle: { color: colorDanger, width: 3 },
+                            itemStyle: { color: colorDanger }
+                        },
+                        {
+                            value: [5.0, 5.0, 4.0, 5.0, 3.0],
+                            name: '行业平均水平',
+                            areaStyle: { color: 'rgba(41, 128, 185, 0.1)' },
+                            lineStyle: { color: colorPrimary, width: 2, type: 'dashed' },
+                            itemStyle: { color: colorPrimary }
+                        }
+                    ]
+                }]
+            });
+
+            // 确保所有图表在窗口尺寸变化时自适应
+            window.addEventListener('resize', function() {
+                chartDivergence.resize();
+                chartLiquidity.resize();
+                chartInventory.resize();
+                chartRadar.resize();
+            });
+        };
+    </script>
+</body>
+</html>
